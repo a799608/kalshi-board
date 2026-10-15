@@ -1,0 +1,20 @@
+<!doctype html><html><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1">
+<title>Live bets</title><meta name=apple-mobile-web-app-capable content=yes><meta name=apple-mobile-web-app-title content="Live bets">
+<style>html,body{margin:0;height:100%;background:#fff}@media (prefers-color-scheme:dark){html,body{background:#151515}}
+iframe{border:0;width:100%;height:100%;display:block}#st{position:fixed;right:8px;bottom:6px;font:11px system-ui;color:#999}</style></head>
+<body><iframe id=f></iframe><div id=st>loading...</div>
+<script>
+const API="https://api.github.com/repos/a799608/kalshi-board/contents/board.html?ref=data";
+const RAW="https://raw.githubusercontent.com/a799608/kalshi-board/data/board.html";
+let last="";
+async function get(){
+  let h=null;
+  try{const r=await fetch(API,{headers:{Accept:"application/vnd.github.raw"},cache:"no-store"});if(r.ok)h=await r.text();}catch(e){}
+  if(!h){try{const r=await fetch(RAW+"?t="+Date.now(),{cache:"no-store"});if(r.ok)h=await r.text();}catch(e){}}
+  const st=document.getElementById("st");
+  if(h&&h!==last){const f=document.getElementById("f");const y=f.contentWindow?f.contentWindow.scrollY:0;f.srcdoc=h;last=h;
+    f.onload=()=>{try{f.contentWindow.scrollTo(0,y)}catch(e){}};}
+  st.textContent=h?"":"offline - retrying";
+}
+get();setInterval(get,75000);document.addEventListener("visibilitychange",()=>{if(!document.hidden)get();});
+</script></body></html>
